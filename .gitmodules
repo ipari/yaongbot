@@ -1,0 +1,3 @@
+[submodule "ai-makers-kit"]
+	path = ai-makers-kit
+	url = https://github.com/gigagenie/ai-makers-kit.git
