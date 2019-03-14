@@ -1,3 +1,4 @@
+import codecs
 import yaml
 
 
@@ -6,8 +7,8 @@ CONFIG_PATH = 'config.yml'
 
 
 def load_yaml(path, key=None):
-    with open(path, 'w') as f:
-        data = yaml.load(f)
+    with codecs.open(path, 'r', 'utf-8') as f:
+        data = yaml.safe_load(f)
         if key:
             return data.get(key, None)
         return data

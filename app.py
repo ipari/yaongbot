@@ -1,17 +1,17 @@
-import os
 import threading
 from flask import Flask
 from slackclient import SlackClient
 
 from bot import Bot
+from helper import get_secret
 from view import viewer
 
 
 app = Flask(__name__)
 app.register_blueprint(viewer)
 
-SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN')
-sc = SlackClient(SLACK_BOT_TOKEN)
+token = get_secret('slack')['bot']
+sc = SlackClient(token)
 
 
 if __name__ == '__main__':
