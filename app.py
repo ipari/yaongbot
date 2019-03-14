@@ -2,8 +2,8 @@ import threading
 from flask import Flask
 from slackclient import SlackClient
 
-from slackbot import SlackBot
-from audiobot import AudioBot
+from bot.slackbot import SlackBot
+from bot.audiobot import AudioBot
 from helper import get_secret
 from view import viewer
 
