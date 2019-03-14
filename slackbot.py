@@ -1,7 +1,7 @@
 import time
 
 
-class Bot(object):
+class SlackBot(object):
     def __init__(self, sc):
         self.sc = sc
 
