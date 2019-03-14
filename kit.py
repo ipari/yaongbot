@@ -1,8 +1,50 @@
+import sys
+sys.path.insert(0, 'ai-makers-kit/python')
+
+
+import datetime
+import hmac
+import hashlib
+import gigagenieRPC_pb2
+import gigagenieRPC_pb2_grpc
+import grpc
 import ktkws
 import pyaudio
 import wave
 from ctypes import *
 from six.moves import queue
+
+from helper import get_secret
+
+
+RATE = 16000
+CHUNK = 512
+
+kt_secret = get_secret('kt')
+CLIENT_ID = kt_secret['client_id']
+CLIENT_KEY = kt_secret['client_key']
+CLIENT_SECRET = kt_secret['client_secret']
+
+
+def getMetadata():
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
+    message = CLIENT_ID + ':' + timestamp
+    signature = hmac.new(CLIENT_SECRET.encode(), message.encode(), hashlib.sha256).hexdigest()
+    metadata = [('x-auth-clientkey', CLIENT_KEY),
+                ('x-auth-timestamp', timestamp),
+                ('x-auth-signature', signature)]
+
+    return metadata
+
+
+def credentials(context, callback):
+    callback(getMetadata(), None)
+
+
+def getCredentials():
+    sslCred = grpc.ssl_channel_credentials()
+    authCred = grpc.metadata_call_credentials(credentials)
+    return grpc.composite_channel_credentials(sslCred, authCred)
 
 
 ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
@@ -11,10 +53,6 @@ def py_error_handler(filename, line, function, err, fmt):
 c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
 asound = cdll.LoadLibrary('libasound.so')
 asound.snd_lib_error_set_handler(c_error_handler)
-
-
-RATE = 16000
-CHUNK = 512
 
 
 class MicrophoneStream(object):
@@ -115,3 +153,40 @@ def detect():
             if rc == 1:
                 play_file("ai-makers-kit/data/sample_sound.wav")
                 return 200
+
+
+# Config for GiGA Genie gRPC
+HOST = 'gate.gigagenie.ai'
+PORT = 4080
+
+
+def generate_request():
+    with MicrophoneStream(RATE, CHUNK) as stream:
+        audio_generator = stream.generator()
+
+        for content in audio_generator:
+            message = gigagenieRPC_pb2.reqVoice()
+            message.audioContent = content
+            yield message
+
+
+def get_speech_to_text():
+    print('[STT] started')
+    channel = grpc.secure_channel('{}:{}'.format(HOST, PORT), getCredentials())
+    stub = gigagenieRPC_pb2_grpc.GigagenieStub(channel)
+    request = generate_request()
+    result = ''
+    for response in stub.getVoice2Text(request):
+        if response.resultCd == 200:  # partial
+            print('{:>3} | {}'.format(response.resultCd, response.recognizedText))
+            result = response.recognizedText
+        elif response.resultCd == 201:  # final
+            print('{:>3} | {}'.format(response.resultCd, response.recognizedText))
+            result = response.recognizedText
+            break
+        else:
+            print('{:>3} | {}'.format(response.resultCd, response.recognizedText))
+            break
+    print('>>> | {}'.format(result))
+    return result
+

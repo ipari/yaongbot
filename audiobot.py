@@ -1,6 +1,6 @@
 import ktkws
 
-from kit import detect
+from kit import detect, get_speech_to_text
 
 
 # 키워드: ['기가지니', '지니야', '친구야', '자기야']
@@ -25,3 +25,5 @@ class AudioBot(object):
         rc = self.recognize_self()
         if rc == 200:
             print('Meow!')
+            get_voice_to_text()
+            text = get_speech_to_text()
