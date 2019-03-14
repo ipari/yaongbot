@@ -4,6 +4,7 @@ from slackclient import SlackClient
 
 from bot.slackbot import SlackBot
 from bot.audiobot import AudioBot
+from brain import Brain
 from helper import get_secret
 from view import viewer
 
@@ -17,7 +18,9 @@ sc = SlackClient(token)
 
 if __name__ == '__main__':
     if sc.rtm_connect():
-        slackbot = SlackBot(sc)
+        brain = Brain()
+
+        slackbot = SlackBot(brain, sc)
         slack_thread = threading.Thread(target=slackbot.listen, args=())
         slack_thread.daemon = True
         slack_thread.start()
