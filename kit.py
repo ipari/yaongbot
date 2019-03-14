@@ -190,3 +190,25 @@ def get_speech_to_text():
     print('>>> | {}'.format(result))
     return result
 
+
+def get_text_to_speech(text, filename='answer.wav'):
+    print('[TTS] started')
+    channel = grpc.secure_channel('{}:{}'.format(HOST, PORT), getCredentials())
+    stub = gigagenieRPC_pb2_grpc.GigagenieStub(channel)
+
+    message = gigagenieRPC_pb2.reqText()
+    message.lang = 0
+    message.mode = 0
+    message.text = text
+    rc = None
+    with open(filename, 'wb') as f:
+        for response in stub.getText2VoiceStream(message):
+            rc = response.resOptions.resultCd
+            if response.HasField("resOptions"):
+                print('{:>3} |'.format(rc))
+            if response.HasField("audioContent"):
+                print('{:>3} | Save as {}'.format(rc, filename))
+                f.write(response.audioContent)
+    play_file(filename)
+    print('>>> | play {}'.format(filename))
+    return rc
