@@ -25,7 +25,7 @@ if __name__ == '__main__':
         slack_thread.daemon = True
         slack_thread.start()
 
-        audiobot = AudioBot()
+        audiobot = AudioBot(brain)
         audio_thread = threading.Thread(target=audiobot.listen, args=())
         audio_thread.daemon = True
         audio_thread.start()

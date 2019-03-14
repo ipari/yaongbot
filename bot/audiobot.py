@@ -8,8 +8,8 @@ KEYWORD_INDEX = 1
 
 
 class AudioBot(object):
-    def __init__(self):
-        pass
+    def __init__(self, brain):
+        self.brain = brain
 
     def listen(self):
         while True:
@@ -17,5 +17,9 @@ class AudioBot(object):
             if rc == 200:
                 print('Meow!')
                 text = get_speech_to_text()
-                get_text_to_speech(text)
+                response = self.brain.find_answer(text)
+                if response:
+                    get_text_to_speech(response)
+                else:
+                    get_text_to_speech(text)
             time.sleep(2)
