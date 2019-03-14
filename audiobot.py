@@ -1,3 +1,5 @@
+import time
+
 from kit import *
 
 
@@ -10,8 +12,10 @@ class AudioBot(object):
         pass
 
     def listen(self):
-        rc = recognize_self(KEYWORD_INDEX)
-        if rc == 200:
-            print('Meow!')
-            text = get_speech_to_text()
-            get_text_to_speech(text)
+        while True:
+            rc = recognize_self(KEYWORD_INDEX)
+            if rc == 200:
+                print('Meow!')
+                text = get_speech_to_text()
+                get_text_to_speech(text)
+            time.sleep(2)
