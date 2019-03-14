@@ -17,13 +17,18 @@ from six.moves import queue
 from helper import get_secret
 
 
-RATE = 16000
-CHUNK = 512
+__all__ = ['recognize_self', 'get_speech_to_text', 'get_text_to_speech']
+
 
 kt_secret = get_secret('kt')
 CLIENT_ID = kt_secret['client_id']
 CLIENT_KEY = kt_secret['client_key']
 CLIENT_SECRET = kt_secret['client_secret']
+
+KWS_MODEL_PATH = 'ai-makers-kit/data/kwsmodel.pack'
+
+RATE = 16000
+CHUNK = 512
 
 
 def getMetadata():
@@ -153,6 +158,15 @@ def detect():
             if rc == 1:
                 play_file("ai-makers-kit/data/sample_sound.wav")
                 return 200
+
+
+def recognize_self(keyword_index):
+    ktkws.init(KWS_MODEL_PATH)
+    ktkws.start()
+    ktkws.set_keyword(keyword_index)
+    rc = detect()
+    ktkws.stop()
+    return rc
 
 
 # Config for GiGA Genie gRPC
