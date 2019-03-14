@@ -15,7 +15,8 @@ class AudioBot(object):
         while True:
             rc = recognize_self(KEYWORD_INDEX)
             if rc == 200:
-                print('Meow!')
+                print('[AudioBot] waiting your next word')
+                print('owo | Meow!')
                 text = get_speech_to_text()
                 response = self.brain.find_answer(text)
                 if response:

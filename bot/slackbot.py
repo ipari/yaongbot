@@ -15,7 +15,10 @@ class SlackBot(object):
         return 'bot_id' in response
 
     def say(self, response):
-        answer = self.brain.find_answer(response['text'])
+        text = response['text']
+        print('[SlackBot] heard')
+        print('    | "{}"'.format(text))
+        answer = self.brain.find_answer(text)
         if answer is None:
             return
 

@@ -73,15 +73,23 @@ class Brain(object):
         return is_valid
 
     def find_answer(self, sentence):
+        print('[Brain] find answer')
         if self.triggers is not None:
             if not self.check_keywords(sentence, self.triggers):
+                print('>>> | no trigger in text'.format(sentence))
                 return
 
         pos = self.to_pos(sentence)
+        print('    | {}'.format(pos))
         for qna in self.qnas:
             keywords = qna['keywords']
             if self.check_keywords(sentence, keywords, pos=pos):
                 answers = qna['answers']
                 if isinstance(answers, list):
-                    return random.choice(answers)
+                    answer = random.choice(answers)
+                    print('>>> | "{}"'.format(answer))
+                    return answer
+                print('>>> | "{}"'.format(answers))
                 return answers
+        print('>>> | no match answer')
+        return
