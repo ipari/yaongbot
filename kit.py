@@ -223,6 +223,9 @@ def get_text_to_speech(text, filename='answer.wav'):
             if response.HasField("audioContent"):
                 print('{:>3} | Save as {}'.format(rc, filename))
                 f.write(response.audioContent)
-    play_file(filename)
-    print('>>> | play {}'.format(filename))
+    if rc == 500:
+        print('>>> | TTS error')
+    else:
+        play_file(filename)
+        print('>>> | play {}'.format(filename))
     return rc
