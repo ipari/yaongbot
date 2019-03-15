@@ -1,3 +1,4 @@
+import jpype
 import random
 from konlpy.tag import Okt
 
@@ -52,6 +53,9 @@ class Brain(object):
         self.qnas = data['qnas']
 
     def to_pos(self, sentence):
+        # 멀티스레드에서 JVM 부를 때 발생하는 SIGSEGV 에러 해결.
+        jpype.attachThreadToJVM()
+
         pos = self.okt.pos(sentence, stem=True)
         pos = [p[0] for p in pos]
         return pos
