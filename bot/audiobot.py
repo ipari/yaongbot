@@ -1,5 +1,3 @@
-import time
-
 from kit import *
 
 
@@ -23,4 +21,3 @@ class AudioBot(object):
                     get_text_to_speech(response)
                 else:
                     get_text_to_speech(text)
-            time.sleep(2)
