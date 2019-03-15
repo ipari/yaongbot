@@ -8,13 +8,12 @@ from helper import load_yaml
 class Brain(object):
 
     def __init__(self):
-        self.data = None
         self.groups = {}
         self.triggers = None
         self.qnas = []
+        self.okt = Okt()
 
         self.load_data()
-        self.okt = Okt()
 
     def process_group(self, keyword, allow_group=True):
         if not keyword.startswith('group:'):
