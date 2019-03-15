@@ -56,6 +56,7 @@ class Brain(object):
         jpype.attachThreadToJVM()
 
         pos = self.okt.pos(sentence, stem=True)
+        print('    | {}'.format(pos))
         pos = [p[0] for p in pos]
         return pos
 
