@@ -17,7 +17,8 @@ from six.moves import queue
 from helper import get_secret
 
 
-__all__ = ['recognize_self', 'get_speech_to_text', 'get_text_to_speech']
+__all__ = ['recognize_self', 'get_speech_to_text', 'get_text_to_speech',
+           'play_file']
 
 
 kt_secret = get_secret('kt')

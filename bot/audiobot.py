@@ -10,6 +10,7 @@ class AudioBot(object):
         self.brain = brain
 
     def listen(self):
+        play_file('wav/glad.wav')
         while True:
             rc = recognize_self(KEYWORD_INDEX)
             if rc == 200:
@@ -20,4 +21,5 @@ class AudioBot(object):
                 if response:
                     get_text_to_speech(response)
                 else:
-                    get_text_to_speech(text)
+                    play_file('wav/dont_know.wav')
+                play_file('wav/anything_else.wav')
