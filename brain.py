@@ -2,6 +2,7 @@ import jpype
 import random
 from konlpy.tag import Okt
 
+from hand import Hand
 from helper import load_yaml
 
 
@@ -14,6 +15,7 @@ class Brain(object):
         self.okt = Okt()
 
         self.load_data()
+        self.hand = Hand()
 
     def process_group(self, keyword, allow_group=True):
         if not keyword.startswith('group:'):
