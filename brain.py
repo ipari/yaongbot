@@ -91,11 +91,10 @@ class Brain(object):
             keywords = qna['keywords']
             if self.check_keywords(sentence, keywords, pos=pos):
                 answers = qna['answers']
-                if isinstance(answers, list):
-                    answer = random.choice(answers)
-                    print('>>> | "{}"'.format(answer))
-                    return answer
-                print('>>> | "{}"'.format(answers))
-                return answers
+                if not isinstance(answers, list):
+                    answers = [answers]
+                answer = random.choice(answers)
+                print('>>> | "{}"'.format(answer))
+                return answer
         print('>>> | no match answer')
         return
