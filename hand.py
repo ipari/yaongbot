@@ -45,3 +45,8 @@ class Hand(object):
             if all(value is not None for value in viewvalues(info)):
                 return info
         return info
+
+    def do_action(self, name, method, args):
+        device = self.devices.get(name)
+        func = getattr(device, method)
+        return func(*args)

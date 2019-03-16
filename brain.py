@@ -6,6 +6,12 @@ from hand import Hand
 from helper import load_yaml
 
 
+POS = {
+    'number': 'Number',
+    'noun': 'Noun'
+}
+
+
 class Brain(object):
 
     def __init__(self):
@@ -58,13 +64,12 @@ class Brain(object):
         jpype.attachThreadToJVM()
 
         pos = self.okt.pos(sentence, stem=True)
-        print('    | {}'.format(pos))
-        pos = [p[0] for p in pos]
         return pos
 
     def check_keywords(self, sentence, keywords, pos=None):
         is_valid = True
         pos = pos or self.to_pos(sentence)
+        pos = [p[0] for p in pos]
 
         for keyword in keywords:
             if isinstance(keyword, list):
@@ -78,23 +83,51 @@ class Brain(object):
                     is_valid = False
         return is_valid
 
+    @staticmethod
+    def process_params(params, pos):
+        if not isinstance(params, list):
+            params = [param.strip() for param in params.split(',')]
+        args = [[s for s, t in pos if t == POS[param]][0] for param in params]
+        return args
+
     def find_answer(self, sentence):
         print('[Brain] find answer')
-        if self.triggers is not None:
-            if not self.check_keywords(sentence, self.triggers):
-                print('>>> | no trigger in text'.format(sentence))
-                return
 
         pos = self.to_pos(sentence)
         print('    | {}'.format(pos))
+
+        if self.triggers is not None:
+            if not self.check_keywords(sentence, self.triggers, pos=pos):
+                print('>>> | no trigger in text'.format(sentence))
+                return
+
         for qna in self.qnas:
             keywords = qna['keywords']
-            if self.check_keywords(sentence, keywords, pos=pos):
-                answers = qna['answers']
-                if not isinstance(answers, list):
-                    answers = [answers]
-                answer = random.choice(answers)
-                print('>>> | "{}"'.format(answer))
-                return answer
+            if not self.check_keywords(sentence, keywords, pos=pos):
+                continue
+
+            answers = qna['answers']
+            if not isinstance(answers, list):
+                answers = [answers]
+            answer = random.choice(answers)
+
+            actions = qna.get('actions')
+            if actions:
+                results = []
+                for action in actions:
+                    name = action.get('device')
+                    method = action.get('action')
+                    params = action.get('params', [])
+                    args = self.process_params(params, pos)
+                    print('    | action: {}.{}({})'.format(name, method, ', '.join(args)))
+
+                    result = self.hand.do_action(name, method, args)
+                    if isinstance(result, tuple):
+                        results += result
+                    else:
+                        results.append(result)
+                answer = answer.format(*results)
+            print('>>> | "{}"'.format(answer))
+            return answer
         print('>>> | no match answer')
         return

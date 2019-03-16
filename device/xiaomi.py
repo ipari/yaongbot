@@ -30,8 +30,14 @@ class MiAir(object):
 
     @discover_required
     def be_custom(self, level):
+        level = int(level)
+        if level < 0 or level > 17:
+            print('ERR | level should be between 1 <= level <= 17')
+            return
+
         self.device.set_favorite_level(level)
         self.device.set_mode(OperationMode.Favorite)
+        return level
 
     @discover_required
     def be_silent(self):
@@ -44,3 +50,15 @@ class MiAir(object):
     @discover_required
     def be_turbo(self):
         self.be_custom(16)
+
+    @discover_required
+    def get_aqi(self):
+        return self.status.aqi
+
+    @discover_required
+    def get_temperature(self):
+        return self.status.temperature
+
+    @discover_required
+    def get_humidity(self):
+        return self.status.humidity
