@@ -6,7 +6,7 @@ grpcio==1.19.0
 grpcio-tools==1.19.0
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 JPype1==0.6.3
 konlpy==0.5.1
 ktkws==1.0.1
